@@ -31,4 +31,13 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedButton1();
+	CEdit my_video;
+	CSliderCtrl m_pos;
+	CSliderCtrl m_volume;
+	CEdit m_url;
+	afx_msg void OnBnClickedBtnPlay();
+	CButton m_btnplay;
+	afx_msg void OnNMCustomdrawSliderVolume(NMHDR* pNMHDR, LRESULT* pResult);
 };
