@@ -87,14 +87,14 @@ void CVideoClientDlg::OnPaint()
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
 		// 使图标在工作区矩形中居中
-		int cxIcon = GetSystemMetrics(SM_CXICON);
-		int cyIcon = GetSystemMetrics(SM_CYICON);
+		int cxIcon = GetSystemMetrics(SM_CXICON);//获取窗口的宽度
+		int cyIcon = GetSystemMetrics(SM_CYICON);//获取窗口的高度
 		CRect rect;
-		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2; // 计算图标位置
-		int y = (rect.Height() - cyIcon + 1) / 2;
+		GetClientRect(&rect);//获取窗口的大小
+		int x = (rect.Width() - cxIcon + 1) / 2; // 计算窗口位置
+		int y = (rect.Height() - cyIcon + 1) / 2; 
 
-		// 绘制图标
+		// 绘制视频播放器窗口
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
@@ -112,20 +112,20 @@ HCURSOR CVideoClientDlg::OnQueryDragIcon()
 
 
 
-void CVideoClientDlg::OnTimer(UINT_PTR nIDEvent)
+void CVideoClientDlg::OnTimer(UINT_PTR nIDEvent)//定时器，用于更新播放时间
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (nIDEvent == 0) {
 		//控制层，获取播放状态，进度信息
-		float pos = m_controller->VideoCtrl(EVLC_GET_POSITION);
+		float pos = m_controller->VideoCtrl(EVLC_GET_POSITION);//向vlc获取播放进度
 		if (pos != -1.0f) {//更新播放时间
-			if (m_length <= 0.0f)m_length = m_controller->VideoCtrl(EVLC_GET_LENGTH);
+			if (m_length <= 0.0f)m_length = m_controller->VideoCtrl(EVLC_GET_LENGTH); // 获取视频长度
 			if (m_pos.GetRangeMax() <= 1) {
 				m_pos.SetRange(0, int(m_length)); // 设置进度条范围
 			}
 			CString strPos;
-			strPos.Format(_T("%f/%f"), pos * m_length, m_length); // 设置播放时间
-			SetDlgItemText(IDC_STATIC_TIME, strPos); // 设置播放时间
+			strPos.Format(_T("%f/%f"), pos * m_length, m_length); // 格式化当前播放时间--：--/视频总时长--：--
+			SetDlgItemText(IDC_STATIC_TIME, strPos); // 设置当前播放时间
 			m_pos.SetPos(int(m_length * pos)); // 设置进度条位置
 		}
 	}
@@ -195,9 +195,9 @@ void CVideoClientDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	//TRACE("pos %p volume %p cur %p pos %d code %d\r\n", &m_pos, &m_volume, pScrollBar, nPos, nSBCode);
 	if (nSBCode == 5) {//如果进度条被拖动了
 		CString strPosition;
-		strPosition.Format(_T("%d%%"), nPos);
+		strPosition.Format(_T("%d%%"), nPos);//格式化当前设置的播放时间
 		SetDlgItemText(IDC_STATIC_TIME, strPosition); // 设置播放时间
-		m_controller->SetPosition(float(nPos) / m_length); // 设置播放位置
+		m_controller->SetPosition(float(nPos) / m_length); //向vlc设置播放位置
 	}
 	CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar);
 }
